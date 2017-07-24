@@ -5,10 +5,10 @@
   "extends": "airbnb",
   "rules": {
     // Necessary to stop end-of-line errors on Windows.
-    // "linebreak-style": [
-    //   "error",
-    //   "windows"
-    // ],
+    "linebreak-style": [
+      "error",
+      "windows"
+    ],
     // Only warn when classes are used in React components.
     "react/prefer-stateless-function": [
       "warn",
