@@ -37,9 +37,13 @@
     "react-error-overlay": "^1.0.9",
     "react-redux": "^5.0.5",
     "redux": "^3.7.2",
+    "redux-saga": "^0.15.6",
+    "semantic-ui-css": "^2.2.11",
+    "semantic-ui-react": "^0.71.1",
     "style-loader": "0.18.2",
     "sw-precache-webpack-plugin": "0.11.3",
     "url-loader": "0.5.9",
+    "uuid": "^3.1.0",
     "webpack": "2.6.1",
     "webpack-dev-server": "2.5.0",
     "webpack-manifest-plugin": "1.1.0",
@@ -89,5 +93,9 @@
   },
   "eslintConfig": {
     "extends": "react-app"
+  },
+  "devDependencies": {
+    "prop-types": "^15.5.10",
+    "redux-devtools-extension": "^2.13.2"
   }
 }
