@@ -6,7 +6,7 @@ import { fetchPantryItemsAPI } from '../api/pantryItems';
 export const FETCH_PANTRY_ITEMS = 'pantryItems/FETCH_PANTRY_ITEMS';
 const FETCH_PANTRY_ITEMS_SUCCESS = `${FETCH_PANTRY_ITEMS}_SUCCESS`;
 const FETCH_PANTRY_ITEMS_FAILURE = `${FETCH_PANTRY_ITEMS}_FAILURE`;
-const RESET_PANTRY_ERROR = 'pantryItems/RESET_PANTRY_ERROR';
+const RESET_PANTRY_ERROR_STATE = 'pantryItems/RESET_PANTRY_ERROR_STATE';
 
 // Actions.
 // -----------------------------------------------------------------------------
@@ -25,8 +25,8 @@ const fetchPantryItemsFailure = error => ({
   error,
 });
 
-const resetPantryError = () => ({
-  type: RESET_PANTRY_ERROR,
+const resetPantryErrorState = () => ({
+  type: RESET_PANTRY_ERROR_STATE,
 });
 
 // Reducer.
@@ -47,7 +47,7 @@ export default function pantry(state = defaultState, action) {
         pantryItems: action.pantryItems,
         error: action.error,
       };
-    case RESET_PANTRY_ERROR:
+    case RESET_PANTRY_ERROR_STATE:
       return {
         ...state,
         error: null,
@@ -61,7 +61,9 @@ export default function pantry(state = defaultState, action) {
 // -----------------------------------------------------------------------------
 export function* fetchPantryItemsSaga(action) {
   try {
-    yield put(resetPantryError());
+    // Reset error state prior to call in order to restore loading in components
+    // that observe error.
+    yield put(resetPantryErrorState());
     const pantryItems = yield call(fetchPantryItemsAPI, action.id);
     yield put(fetchPantryItemsSuccess(pantryItems));
   } catch (error) {
