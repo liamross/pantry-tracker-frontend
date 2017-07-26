@@ -19,8 +19,8 @@ class App extends Component {
             <div className="pantry-item-amount">
               {pantryItem.amount.current}
               <span className="pantry-item-original-amount">
-                      `/ ${pantryItem.amount.initial} ${pantryItem.amount.unit}`
-                    </span>
+                `/ ${pantryItem.amount.initial} ${pantryItem.amount.unit}`
+              </span>
             </div>
           </div>
           <div className="pantry-item-bottom pantry-item-container">
