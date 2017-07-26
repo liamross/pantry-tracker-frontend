@@ -138,6 +138,7 @@ module.exports = {
           /\.html$/,
           /\.(js|jsx)$/,
           /\.css$/,
+          /\.scss$/,
           /\.json$/,
           /\.bmp$/,
           /\.gif$/,
@@ -214,6 +215,34 @@ module.exports = {
                         flexbox: 'no-2009',
                       }),
                     ],
+                  },
+                },
+              ],
+            },
+            extractTextPluginOptions
+          )
+        ),
+        // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
+      },
+      {
+        test: /\.scss$/,
+        loader: ExtractTextPlugin.extract(
+          Object.assign(
+            {
+              fallback: require.resolve('style-loader'),
+              use: [
+                {
+                  loader: require.resolve('css-loader'),
+                  options: {
+                    importLoaders: 1,
+                    minimize: true,
+                    sourceMap: true,
+                  },
+                },
+                {
+                  loader: require.resolve('sass-loader'),
+                  options: {
+                    sourceMap: true
                   },
                 },
               ],

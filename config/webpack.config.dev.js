@@ -139,6 +139,7 @@ module.exports = {
           /\.html$/,
           /\.(js|jsx)$/,
           /\.css$/,
+          /\.scss$/,
           /\.json$/,
           /\.bmp$/,
           /\.gif$/,
@@ -208,6 +209,21 @@ module.exports = {
                 }),
               ],
             },
+          },
+        ],
+      },
+      {
+        test: /\.scss$/,
+        use: [
+          require.resolve('style-loader'),
+          {
+            loader: require.resolve('css-loader'),
+            options: {
+              importLoaders: 1,
+            },
+          },
+          {
+            loader: require.resolve('sass-loader'),
           },
         ],
       },
