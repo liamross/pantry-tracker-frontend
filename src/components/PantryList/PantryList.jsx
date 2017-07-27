@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Dimmer, Loader } from 'semantic-ui-react';
 import { fetchPantryItems } from '../../redux/pantryItems';
 import PantryListItem from '../PantryListItem/PantryListItem';
 
@@ -15,25 +16,37 @@ class PantryList extends Component {
     this.props.fetchPantryItems('1234abcd');
   }
 
-  renderContent() {
+  isLoading() {
+    return (this.props.error === null && this.props.pantryItems === null);
+  }
+
+  renderContents() {
     const { pantryItems, error } = this.props;
-    if (pantryItems !== null && pantryItems.length > 0) {
-      return pantryItems.map(pantryItem => (
-        <PantryListItem
-          pantryItem={pantryItem}
-          key={pantryItem.id}
-        />
-      ));
-    } else if (error === null) {
-      return 'Loading...';
+
+    if (pantryItems && error === null) {
+      return (
+        pantryItems.map(pantryItem => (
+          <PantryListItem
+            pantryItem={pantryItem}
+            key={pantryItem.id}
+          />
+        ))
+      );
+    } else if (error !== null) {
+      return (
+        <div>Error: {error}</div>
+      );
     }
-    return `Error: ${error}`;
+    return null;
   }
 
   render() {
     return (
       <div style={pantryListStyle}>
-        {this.renderContent()}
+        <Dimmer active={this.isLoading()} inverted>
+          <Loader inverted>Loading</Loader>
+        </Dimmer>
+        {this.renderContents()}
       </div>
     );
   }
