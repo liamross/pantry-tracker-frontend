@@ -1,0 +1,61 @@
+@import "../../../../theme/theme.scss";
+@import "../../../../theme/mixins.scss";
+
+// Generic panel styling.
+.Panel {
+  // Ensure that the panel overlays any loaders or other components.
+  z-index: 2147483640;
+  * {
+    z-index: 2147483640;
+  }
+
+  // Blocking component.
+  &-blocking {
+    @include absolute(0, 0, 0, 0);
+    display: none;
+    cursor: pointer;
+    &:focus, &:active {
+      outline: none;
+    }
+
+    // Visible component of block.
+    &-visibleBlock {
+      background-color: $light-blocker;
+      @include absolute($topbar-height, 0, 0, 0);
+      @include transition(opacity, 0.8s, cubic-bezier);
+      visibility: hidden;
+      opacity: 0;
+      &:focus, &:active {
+        outline: none;
+      }
+    }
+  }
+
+  // Main panel component.
+  &-main {
+    @include absolute($topbar-height, null, 0, 0);
+    @include transition(width);
+    background-color: white;
+    overflow: hidden;
+    width: 0;
+    &-wrapper {
+      @include absolute(0, 0, 0);
+      width: $app-menu-width;
+    }
+  }
+
+  // Panel Open.
+  // ---------------------------------------------------------------------------
+  &--open {
+    .Panel-blocking {
+      display: block;
+      &-visibleBlock {
+        visibility: visible;
+        opacity: 1;
+      }
+    }
+    .Panel-main {
+      width: $app-menu-width;
+    }
+  }
+}
