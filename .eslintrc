@@ -33,14 +33,19 @@
     ],
     // Warn if maximum line-length of 80 characters is exceeded.
     "max-len": [
-      "warn",
+      "error",
       80
     ],
     // Allow dev dependencies for things like devtools or PropTypes.
     "import/no-extraneous-dependencies": ["error", {"devDependencies": true}],
+    // Stop limiting the naming of imports.
     "import/no-named-as-default": "off",
+    // Stop limiting the naming of imports.
     "import/no-named-as-default-member": "off",
-    "no-unused-vars": "warn"
+    // Only warn for unused variables.
+    "no-unused-vars": "warn",
+    // Allow const to be defined within a switch case.
+    "no-case-declarations": "off"
   },
   "env": {
     // Specify the environment to avoid errors.

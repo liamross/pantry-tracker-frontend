@@ -6,15 +6,21 @@ import './Panel.scss';
 class Panel extends Component {
   render() {
     const {
-      isOpen,
-      panelId,
+      // - Required.
+      // onClose function.
+      // This function will return with the panelId provided when the panel
+      // closes. This will allow you to keep track of multiple panels at once,
+      // and allow for state determination of the currently open panel.
       closePanelFunction,
-      children,
-      panelClass,
-      headerText,
-      footer,
-      blocking,
-      visibleBlock,
+      isOpen,       // boolean
+      panelId,      // id if there is more than one panel
+      children,     // children within the react element
+      // - Optional.
+      panelClass,   // null
+      headerText,   // null (no header text)
+      footer,       // null (no footer)
+      blocking,     // true (blocks background interaction)
+      visibleBlock, // true (blocker is visible - lightens)
     } = this.props;
     return (
       <div className={isOpen ? 'Panel Panel--open' : 'Panel'}>
@@ -31,7 +37,12 @@ class Panel extends Component {
         }
         <div className={`Panel-main${panelClass ? ` ${panelClass}` : ''}`}>
           <div className="Panel-main-wrapper">
-            <div className="Panel-main-wrapper-header">
+            <div
+              className={
+                `${'Panel-main-wrapper-header'}${
+                headerText ? ' Panel-main-wrapper-header--text' : ''}`
+              }
+            >
               {headerText || null}
             </div>
             <div className="Panel-main-wrapper-body">

@@ -44,10 +44,19 @@ class PantryListItem extends Component {
 }
 
 PantryListItem.propTypes = {
-  pantryItem: PropTypes.objectOf(
+  pantryItem: PropTypes.objectOf( // pantryItem
     PropTypes.oneOfType([
-      PropTypes.node,
-      PropTypes.object,
+      PropTypes.string,           // id, name
+      PropTypes.instanceOf(Date), // expires
+      PropTypes.objectOf(         // amount
+        PropTypes.oneOfType([
+          PropTypes.number,       // amount.current, amount.initial
+          PropTypes.string,       // amount.unit
+        ]),
+      ),
+      PropTypes.arrayOf(          // recipes, notifications
+        PropTypes.string,         // recipe.id, notification.id
+      ),
     ]),
   ).isRequired,
 };

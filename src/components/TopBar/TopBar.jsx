@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, Image } from 'semantic-ui-react';
+import { Menu } from 'semantic-ui-react';
 
 import Panel from '../common/Panel/Panel';
 import './TopBar.scss';
@@ -21,7 +21,7 @@ class TopBar extends React.Component {
     this.setState({
       ...this.state,
       openPanelId: id,
-    }, () => console.log(this.state));
+    });
   }
 
   closePanel(id) {
@@ -29,7 +29,7 @@ class TopBar extends React.Component {
       this.setState({
         ...this.state,
         openPanelId: null,
-      }, () => console.log(this.state));
+      });
     }
   }
 //onClick={() => this.openPanel(NAV_PANEL)}

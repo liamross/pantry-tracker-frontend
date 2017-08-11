@@ -1,26 +1,31 @@
 import uuid from 'uuid';
 
-const pantry = [];
+const pantry = {};
 
 for (let i = 1; i <= 9; i++) {
+  const thisId = uuid.v4();
+  const recipes = [];
+  const notifications = [];
+
+  for (let j = 1; j < i; j++) {
+    recipes.push(uuid.v4());
+    notifications.push(uuid.v4());
+  }
+
   const item = {
-    id: uuid.v4(),
+    id: thisId,
     name: `Name ${i}`,
     amount: {
       current: i,
       initial: i + 1,
-      unit: 'litre',
+      unit: i % 2 === 0 ? 'litre(s)' : 'gram(s)',
     },
     expires: new Date(),
-    recipes: [],
-    notifications: [],
+    recipes,
+    notifications,
   };
 
-  for (let j = 0; j < i - 1; j++) {
-    item.recipes.push(j);
-    item.notifications.push(j);
-  }
-  pantry.push(item);
+  pantry[thisId] = item;
 }
 
 export const fetchPantryItemsAPI = (id) => {

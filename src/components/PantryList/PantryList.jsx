@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Dimmer, Loader } from 'semantic-ui-react';
+import { Button, Dimmer, Loader } from 'semantic-ui-react';
 import { fetchPantryItems } from '../../redux/pantryItems';
 import PantryListItem from '../PantryListItem/PantryListItem';
+import EditPantryModal from '../EditPantryModal/EditPantryModal';
 
 const pantryListStyle = {
   overflowY: 'auto',
@@ -12,12 +13,41 @@ const pantryListStyle = {
 };
 
 class PantryList extends Component {
+  constructor() {
+    super();
+
+    this.state = {
+      isEditModalOpen: false,
+      pantryItemId: null,
+    };
+
+    // Bind all functions.
+    this.openEditModal = this.openEditModal.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+  }
+
   componentWillMount() {
-    this.props.fetchPantryItems('1234abcd');
+    this.props.fetchPantryItems('user_id_goes_here');
   }
 
   isLoading() {
     return (this.props.error === null && this.props.pantryItems === null);
+  }
+
+  openEditModal(id = null) {
+    this.setState({
+      ...this.state,
+      isEditModalOpen: true,
+      pantryItemId: id,
+    });
+  }
+
+  handleClose() {
+    this.setState({
+      ...this.state,
+      isEditModalOpen: false,
+      pantryItemId: null,
+    });
   }
 
   renderContents() {
@@ -25,10 +55,10 @@ class PantryList extends Component {
 
     if (pantryItems && error === null) {
       return (
-        pantryItems.map(pantryItem => (
+        Object.keys(pantryItems).map(key => (
           <PantryListItem
-            pantryItem={pantryItem}
-            key={pantryItem.id}
+            pantryItem={pantryItems[key]}
+            key={key}
           />
         ))
       );
@@ -41,12 +71,19 @@ class PantryList extends Component {
   }
 
   render() {
+    const { isEditModalOpen, pantryItemId } = this.state;
     return (
       <div style={pantryListStyle}>
         <Dimmer active={this.isLoading()} inverted>
           <Loader inverted>Loading</Loader>
         </Dimmer>
+        <Button onClick={() => this.openEditModal()}>New Pantry Item</Button>
         {this.renderContents()}
+        <EditPantryModal
+          isOpen={isEditModalOpen}
+          handleClose={this.handleClose}
+          pantryItemId={pantryItemId}
+        />
       </div>
     );
   }
@@ -58,8 +95,22 @@ PantryList.defaultProps = {
 };
 
 PantryList.propTypes = {
-  pantryItems: PropTypes.arrayOf(
-    PropTypes.object,
+  pantryItems: PropTypes.objectOf(  // pantryItems
+    PropTypes.objectOf(             // pantryItem
+      PropTypes.oneOfType([
+        PropTypes.string,           // id, name
+        PropTypes.instanceOf(Date), // expires
+        PropTypes.objectOf(         // amount
+          PropTypes.oneOfType([
+            PropTypes.number,       // amount.current, amount.initial
+            PropTypes.string,       // amount.unit
+          ]),
+        ),
+        PropTypes.arrayOf(          // recipes, notifications
+          PropTypes.string,         // recipe.id, notification.id
+        ),
+      ]),
+    ),
   ),
   error: PropTypes.string,
   fetchPantryItems: PropTypes.func.isRequired,

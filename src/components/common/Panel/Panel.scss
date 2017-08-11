@@ -22,7 +22,7 @@
     &-visibleBlock {
       background-color: $light-blocker;
       @include absolute($topbar-height, 0, 0, 0);
-      @include transition(opacity, 0.8s, cubic-bezier);
+      @include transition(opacity);
       visibility: hidden;
       opacity: 0;
       &:focus, &:active {
