@@ -89,9 +89,22 @@ class PantryList extends Component {
           <Loader inverted>Loading</Loader>
         </Dimmer>
         <Button onClick={() => this.openEditModal()}>New Pantry Item</Button>
-        <Button onClick={() => fetchPantryItemsDispatch('user_id_goes_here')}>
-          Retry
-        </Button>
+        {
+          Object.prototype.hasOwnProperty.call(
+            fetchStatus,
+            'error',
+          ) ?
+            <div>
+              <Button
+                onClick={() => fetchPantryItemsDispatch('user_id_goes_here')}
+              >
+                Retry
+              </Button>
+              <div>
+                Error: {fetchStatus.error}
+              </div>
+            </div> : null
+        }
         {this.renderContents()}
         <EditPantryModal
           isOpen={isEditModalOpen}

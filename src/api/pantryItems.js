@@ -31,7 +31,7 @@ export const fetchPantryItemsAPI = id =>
 export const patchPantryItemsAPI = (id, pantryItem) =>
   new Promise((resolve, reject) => {
     try {
-      const pantry = JSON.parse(localStorage.getItem(`${id}_pantry`));
+      const pantry = JSON.parse(localStorage.getItem(`${id}_pantry`)) || {};
       localStorage.setItem(`${id}_pantry`, JSON.stringify({
         ...pantry,
         [pantryItem.id]: pantryItem,
@@ -39,7 +39,7 @@ export const patchPantryItemsAPI = (id, pantryItem) =>
 
       setTimeout(() => {
         resolve(pantryItem);
-      }, 800);
+      }, 400);
     } catch (error) {
       reject(error);
     }
@@ -59,7 +59,7 @@ export const deletePantryItem = (id, pantryItemId) =>
 
       setTimeout(() => {
         resolve();
-      }, 800);
+      }, 200);
     } catch (error) {
       reject(error);
     }
