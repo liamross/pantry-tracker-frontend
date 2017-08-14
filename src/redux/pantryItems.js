@@ -1,5 +1,5 @@
 import { call, put } from 'redux-saga/effects';
-import { fetchPantryItemsAPI } from '../api/pantryItems';
+import { fetchPantryItemsAPI, patchPantryItemsAPI } from '../api/pantryItems';
 
 // Actions.
 // -----------------------------------------------------------------------------
@@ -28,70 +28,117 @@ const fetchPantryItemsFailure = error => ({
   error,
 });
 
-const RESET_PANTRY_ERROR_STATE = 'pantryItems/RESET_PANTRY_ERROR_STATE';
-const resetPantryErrorState = () => ({
-  type: RESET_PANTRY_ERROR_STATE,
+export const SAVE_PANTRY_ITEM = 'pantryItems/SAVE_PANTRY_ITEM';
+
+/**
+ * Action creator for adding or editing a pantry item.
+ * @param {String} pantryItem - Pantry item to save.
+ * @returns {Object}
+ */
+export const savePantryItem = (id, pantryItem) => ({
+  type: SAVE_PANTRY_ITEM,
+  id,
+  pantryItem,
 });
 
-// TODO: add action creator for patch pantry items
-
-// TODO: success case
-
-// TODO: failure case
-
-const ADD_QUEUED_REQUEST = 'pantryItems/ADD_QUEUED_REQUEST';
-const addQueuedRequest = pantryItemId => ({
-  type: ADD_QUEUED_REQUEST,
-  pantryItemId,
+const SAVE_PANTRY_ITEM_SUCCESS = `${SAVE_PANTRY_ITEM}_SUCCESS`;
+const savePantryItemSuccess = pantryItem => ({
+  type: SAVE_PANTRY_ITEM_SUCCESS,
+  pantryItem,
 });
 
-const REMOVE_QUEUED_REQUEST = 'pantryItems/REMOVE_QUEUED_REQUEST';
-const removeQueuedRequest = pantryItemId => ({
-  type: REMOVE_QUEUED_REQUEST,
-  pantryItemId,
+const SAVE_PANTRY_ITEM_FAILURE = `${SAVE_PANTRY_ITEM}_FAILURE`;
+const savePantryItemFailure = error => ({
+  type: SAVE_PANTRY_ITEM_FAILURE,
+  error,
+});
+
+const REQUEST_PENDING = 'pantryItems/REQUEST_PENDING';
+const requestPending = (key, loadingBody = '') => ({
+  type: REQUEST_PENDING,
+  key,
+  loadingBody,
+});
+
+const RESET_STATUS = 'pantryItems/RESET_STATUS';
+const resetStatus = key => ({
+  type: RESET_STATUS,
+  key,
 });
 
 // Reducer.
 // -----------------------------------------------------------------------------
+const savePantryItemSuccessHelper = (pantryItems, action) => ({
+  ...pantryItems,
+  [action.pantryItem.id]: action.pantryItem,
+});
+
 const defaultState = {
   pantryItems: null,
-  error: null,
-  requestQueue: [],
+  fetchStatus: { loading: '' },
+  patchStatus: {},
 };
 
-export default function pantry(state = defaultState, action) {
+export default (state = defaultState, action) => {
   switch (action.type) {
     case FETCH_PANTRY_ITEMS_SUCCESS:
       return {
         ...state,
         pantryItems: action.pantryItems,
-        error: null,
+        fetchStatus: { success: '' },
       };
     case FETCH_PANTRY_ITEMS_FAILURE:
       return {
         ...state,
-        error: action.error,
+        fetchStatus: { error: action.error },
       };
-    case RESET_PANTRY_ERROR_STATE:
+    case SAVE_PANTRY_ITEM_SUCCESS:
       return {
         ...state,
-        error: null,
+        pantryItems: savePantryItemSuccessHelper(state.pantryItems, action),
+        patchStatus: { success: action.pantryItem.id },
+      };
+    case SAVE_PANTRY_ITEM_FAILURE:
+      return {
+        ...state,
+        patchStatus: { error: action.error },
+      };
+    case REQUEST_PENDING:
+      return {
+        ...state,
+        [action.key]: { loading: action.loadingBody },
+      };
+    case RESET_STATUS:
+      return {
+        ...state,
+        [action.key]: {},
       };
     default:
       return state;
   }
-}
+};
 
 // Saga.
 // -----------------------------------------------------------------------------
 export function* fetchPantryItemsSaga(action) {
   try {
-    // Reset error state prior to call in order to restore loading in components
-    // that observe error.
-    yield put(resetPantryErrorState());
+    yield put(requestPending('fetchStatus'));
     const pantryItems = yield call(fetchPantryItemsAPI, action.userId);
     yield put(fetchPantryItemsSuccess(pantryItems));
   } catch (error) {
     yield put(fetchPantryItemsFailure(error));
+  }
+}
+
+export function* savePantryItemSaga(action) {
+  console.log('action: ', action);
+  try {
+    yield put(requestPending('patchStatus'));
+    const args = [action.id, action.pantryItem];
+    yield call(patchPantryItemsAPI, ...args);
+    yield put(savePantryItemSuccess(action.pantryItem));
+    yield put(resetStatus('patchStatus'));
+  } catch (error) {
+    yield put(savePantryItemFailure(error));
   }
 }

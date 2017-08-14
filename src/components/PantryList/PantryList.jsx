@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Button, Dimmer, Loader } from 'semantic-ui-react';
+import moment from 'moment';
 import { fetchPantryItems } from '../../redux/pantryItems';
 import PantryListItem from '../PantryListItem/PantryListItem';
 import EditPantryModal from '../EditPantryModal/EditPantryModal';
@@ -27,7 +28,7 @@ class PantryList extends Component {
   }
 
   componentWillMount() {
-    this.props.fetchPantryItems('user_id_goes_here');
+    this.props.fetchPantryItemsDispatch('user_id_goes_here');
   }
 
   isLoading() {
@@ -57,6 +58,7 @@ class PantryList extends Component {
       return (
         Object.keys(pantryItems).map(key => (
           <PantryListItem
+            openEditModal={this.openEditModal}
             pantryItem={pantryItems[key]}
             key={key}
           />
@@ -72,12 +74,24 @@ class PantryList extends Component {
 
   render() {
     const { isEditModalOpen, pantryItemId } = this.state;
+    const { fetchStatus, fetchPantryItemsDispatch } = this.props;
     return (
       <div style={pantryListStyle}>
-        <Dimmer active={this.isLoading()} inverted>
+        <Dimmer
+          active={
+            Object.prototype.hasOwnProperty.call(
+              fetchStatus,
+              'loading',
+            )
+          }
+          inverted
+        >
           <Loader inverted>Loading</Loader>
         </Dimmer>
         <Button onClick={() => this.openEditModal()}>New Pantry Item</Button>
+        <Button onClick={() => fetchPantryItemsDispatch('user_id_goes_here')}>
+          Retry
+        </Button>
         {this.renderContents()}
         <EditPantryModal
           isOpen={isEditModalOpen}
@@ -95,34 +109,34 @@ PantryList.defaultProps = {
 };
 
 PantryList.propTypes = {
-  pantryItems: PropTypes.objectOf(  // pantryItems
-    PropTypes.objectOf(             // pantryItem
+  pantryItems: PropTypes.objectOf(    // pantryItems
+    PropTypes.objectOf(               // pantryItem
       PropTypes.oneOfType([
-        PropTypes.string,           // id, name
-        PropTypes.instanceOf(Date), // expires
-        PropTypes.objectOf(         // amount
-          PropTypes.oneOfType([
-            PropTypes.number,       // amount.current, amount.initial
-            PropTypes.string,       // amount.unit
-          ]),
-        ),
-        PropTypes.arrayOf(          // recipes, notifications
-          PropTypes.string,         // recipe.id, notification.id
+        PropTypes.string,             // id, name
+        PropTypes.instanceOf(moment), // expires
+        PropTypes.number,             // amount.current, amount.initial
+        PropTypes.string,             // amount.unit
+        PropTypes.arrayOf(            // recipes, notifications
+          PropTypes.string,           // recipe.id, notification.id
         ),
       ]),
     ),
   ),
+  fetchStatus: PropTypes.objectOf(
+    PropTypes.string,
+  ).isRequired,
   error: PropTypes.string,
-  fetchPantryItems: PropTypes.func.isRequired,
+  fetchPantryItemsDispatch: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
   pantryItems: state.pantry.pantryItems,
+  fetchStatus: state.pantry.fetchStatus,
   error: state.pantry.error,
 });
 
 const mapDispatchToProps = dispatch => ({
-  fetchPantryItems: id => dispatch(fetchPantryItems(id)),
+  fetchPantryItemsDispatch: id => dispatch(fetchPantryItems(id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PantryList);

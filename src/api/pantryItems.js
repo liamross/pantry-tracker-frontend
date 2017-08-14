@@ -1,38 +1,66 @@
-import uuid from 'uuid';
+/**
+ * Fetch all pantry items associated with the id given.
+ * @param {String} id - The user's id.
+ */
+export const fetchPantryItemsAPI = id =>
+  new Promise((resolve, reject) => {
+    let pantry = null;
 
-const pantry = {};
+    try {
+      pantry = JSON.parse(localStorage.getItem(`${id}_pantry`));
 
-for (let i = 1; i <= 9; i++) {
-  const thisId = uuid.v4();
-  const recipes = [];
-  const notifications = [];
+      if (pantry === null) {
+        setTimeout(() => {
+          reject('Unable to fetch pantry items.');
+        }, 800);
+      }
 
-  for (let j = 1; j < i; j++) {
-    recipes.push(uuid.v4());
-    notifications.push(uuid.v4());
-  }
-
-  const item = {
-    id: thisId,
-    name: `Name ${i}`,
-    amount: {
-      current: i,
-      initial: i + 1,
-      unit: i % 2 === 0 ? 'litre(s)' : 'gram(s)',
-    },
-    expires: new Date(),
-    recipes,
-    notifications,
-  };
-
-  pantry[thisId] = item;
-}
-
-export const fetchPantryItemsAPI = (id) => {
-  console.log('fetch pantry with id: ', id);
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(pantry);
-    }, 2000);
+      setTimeout(() => {
+        resolve(pantry);
+      }, 800);
+    } catch (error) {
+      reject('Unable to fetch pantry items: ', error);
+    }
   });
-};
+
+/**
+ * Patch the pantry items associated with the id given.
+ * @param {String} id - The user's id.
+ * @param {Object} pantryItem - The pantryItem to patch.
+ */
+export const patchPantryItemsAPI = (id, pantryItem) =>
+  new Promise((resolve, reject) => {
+    try {
+      const pantry = JSON.parse(localStorage.getItem(`${id}_pantry`));
+      localStorage.setItem(`${id}_pantry`, JSON.stringify({
+        ...pantry,
+        [pantryItem.id]: pantryItem,
+      }));
+
+      setTimeout(() => {
+        resolve(pantryItem);
+      }, 800);
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+/**
+ * Delete a pantry item from pantry items associated with the id given.
+ * @param {String} id - The user's id.
+ * @param {String} pantryItemId - The pantryItem id to delete.
+ */
+export const deletePantryItem = (id, pantryItemId) =>
+  new Promise((resolve, reject) => {
+    try {
+      const pantry = JSON.parse(localStorage.getItem(`${id}_pantry`));
+      delete pantry[pantryItemId];
+      localStorage.setItem(`${id}_pantry`, JSON.stringify(pantry));
+
+      setTimeout(() => {
+        resolve();
+      }, 800);
+    } catch (error) {
+      reject(error);
+    }
+  });

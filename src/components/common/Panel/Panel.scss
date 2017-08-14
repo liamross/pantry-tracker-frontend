@@ -1,5 +1,5 @@
-@import "../../../../theme/theme.scss";
-@import "../../../../theme/mixins.scss";
+@import "../../theme/theme.scss";
+@import "../../theme/mixins.scss";
 
 // Generic panel styling.
 .Panel {
@@ -20,7 +20,7 @@
 
     // Visible component of block.
     &-visibleBlock {
-      background-color: $light-blocker;
+      background-color: $color-opacityWhite40;
       @include absolute($topbar-height, 0, 0, 0);
       @include transition(opacity);
       visibility: hidden;
@@ -34,7 +34,7 @@
   // Main panel component.
   &-main {
     @include absolute($topbar-height, null, 0, 0);
-    @include transition(width);
+    @include transition(width, 0.2s, cubic-bezier(0.22, 0.61, 0.36, 1));
     background-color: white;
     overflow: hidden;
     width: 0;
