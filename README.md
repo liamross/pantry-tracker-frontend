@@ -1,3 +1,3 @@
-# Pantry Application
+# Pantry Tracker
 
-- Prototype for Pantry application
+- A minimal ui for tracking pantry items.
