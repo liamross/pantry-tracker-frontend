@@ -45,7 +45,9 @@
     // Only warn for unused variables.
     "no-unused-vars": "warn",
     // Allow const to be defined within a switch case.
-    "no-case-declarations": "off"
+    "no-case-declarations": "off",
+    // Allow nested logic expressions.
+    "no-nested-ternary": "off"
   },
   "env": {
     // Specify the environment to avoid errors.

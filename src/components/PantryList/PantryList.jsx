@@ -46,6 +46,38 @@ class PantryList extends Component {
     });
   }
 
+  renderMessage() {
+    const { fetchStatus, fetchPantryItemsDispatch, pantryItems } = this.props;
+    return (
+      // Message bar for a failed call to the backend.
+      Object.prototype.hasOwnProperty.call(
+        fetchStatus,
+        'error',
+      ) ?
+        <Message negative>
+          <Message.Header>Error</Message.Header>
+          <p>{fetchStatus.error}</p>
+          <Button
+            onClick={() => fetchPantryItemsDispatch('user_id_goes_here')}
+          >
+            Retry
+          </Button>
+        </Message> :
+        Object.prototype.hasOwnProperty.call(
+          fetchStatus,
+          'success',
+        ) && pantryItems && Object.keys(pantryItems).length === 0 ?
+          <Message negative>
+            <Message.Header>No pantry items</Message.Header>
+            <p>It looks like you don&apos;t have any pantry items. Click
+              &apos;New Pantry Item&apos; to add an item to your pantry.</p>
+            <Button onClick={() => this.openEditModal()}>
+              New Pantry Item
+            </Button>
+          </Message> : null
+    );
+  }
+
   renderContents() {
     const { pantryItems, error } = this.props;
 
@@ -69,7 +101,7 @@ class PantryList extends Component {
 
   render() {
     const { isEditModalOpen, pantryItemId } = this.state;
-    const { fetchStatus, fetchPantryItemsDispatch } = this.props;
+    const { fetchStatus } = this.props;
     return (
       <div className="PantryList">
         <Dimmer
@@ -86,21 +118,7 @@ class PantryList extends Component {
         <div className="PantryList-bar">
           <Button onClick={() => this.openEditModal()}>New Pantry Item</Button>
         </div>
-        {
-          Object.prototype.hasOwnProperty.call(
-            fetchStatus,
-            'error',
-          ) ?
-            <Message negative>
-              <Message.Header>Error</Message.Header>
-              <p>{fetchStatus.error}</p>
-              <Button
-                onClick={() => fetchPantryItemsDispatch('user_id_goes_here')}
-              >
-                Retry
-              </Button>
-            </Message> : null
-        }
+        {this.renderMessage()}
         {this.renderContents()}
         <EditPantryModal
           isOpen={isEditModalOpen}
