@@ -1,17 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Button, Dimmer, Loader } from 'semantic-ui-react';
+import { Button, Dimmer, Loader, Message } from 'semantic-ui-react';
 import moment from 'moment';
 import { fetchPantryItems } from '../../redux/pantryItems';
 import PantryListItem from '../PantryListItem/PantryListItem';
 import EditPantryModal from '../EditPantryModal/EditPantryModal';
-
-const pantryListStyle = {
-  overflowY: 'auto',
-  overflowX: 'hidden',
-  height: '100%',
-};
+import './PantryList.scss';
 
 class PantryList extends Component {
   constructor() {
@@ -76,7 +71,7 @@ class PantryList extends Component {
     const { isEditModalOpen, pantryItemId } = this.state;
     const { fetchStatus, fetchPantryItemsDispatch } = this.props;
     return (
-      <div style={pantryListStyle}>
+      <div className="PantryList">
         <Dimmer
           active={
             Object.prototype.hasOwnProperty.call(
@@ -88,22 +83,23 @@ class PantryList extends Component {
         >
           <Loader inverted>Loading</Loader>
         </Dimmer>
-        <Button onClick={() => this.openEditModal()}>New Pantry Item</Button>
+        <div className="PantryList-bar">
+          <Button onClick={() => this.openEditModal()}>New Pantry Item</Button>
+        </div>
         {
           Object.prototype.hasOwnProperty.call(
             fetchStatus,
             'error',
           ) ?
-            <div>
+            <Message negative>
+              <Message.Header>Error</Message.Header>
+              <p>{fetchStatus.error}</p>
               <Button
                 onClick={() => fetchPantryItemsDispatch('user_id_goes_here')}
               >
                 Retry
               </Button>
-              <div>
-                Error: {fetchStatus.error}
-              </div>
-            </div> : null
+            </Message> : null
         }
         {this.renderContents()}
         <EditPantryModal

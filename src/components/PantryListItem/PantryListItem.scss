@@ -1,5 +1,6 @@
 .PantryListItem {
-  border: 1px solid #000;
-  padding: 16px;
-  margin: 16px;
+  &-right {
+    display: flex !important;
+    justify-content: flex-end;
+  }
 }
